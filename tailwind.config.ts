@@ -61,7 +61,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				infrared: 'hsl(var(--infrared))',
+				visible: 'hsl(var(--visible))',
+				fusion: 'hsl(var(--fusion))'
+			},
+			backgroundImage: {
+				'gradient-infrared': 'var(--gradient-infrared)',
+				'gradient-visible': 'var(--gradient-visible)',
+				'gradient-fusion': 'var(--gradient-fusion)',
+				'gradient-hero': 'var(--gradient-hero)'
+			},
+			boxShadow: {
+				'infrared': 'var(--shadow-infrared)',
+				'visible': 'var(--shadow-visible)',
+				'fusion': 'var(--shadow-fusion)',
+				'glow': 'var(--shadow-glow)'
+			},
+			transitionTimingFunction: {
+				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+				'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
