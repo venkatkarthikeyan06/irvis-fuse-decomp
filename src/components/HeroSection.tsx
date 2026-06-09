@@ -3,12 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Zap, Eye, Thermometer } from 'lucide-react';
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  onGetStarted?: () => void;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
   return (
     <section className="relative py-20 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
-      
+
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-infrared opacity-10 rounded-full blur-3xl animate-pulse" />
@@ -36,28 +40,25 @@ export const HeroSection: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Advanced neural network-based fusion of infrared thermal and visible spectrum imagery. 
+              Advanced neural network-based fusion of infrared thermal and visible spectrum imagery.
               Experience state-of-the-art computer vision in real-time.
             </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border">
-              <Thermometer className="w-5 h-5 text-infrared" />
               <span className="text-sm">Thermal Analysis</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border">
-              <Eye className="w-5 h-5 text-visible" />
               <span className="text-sm">Visual Enhancement</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border">
-              <Zap className="w-5 h-5 text-fusion" />
               <span className="text-sm">Real-time Fusion</span>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="xl" className="group">
+            <Button variant="hero" size="xl" className="group" onClick={onGetStarted}>
               Get Started
               <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>

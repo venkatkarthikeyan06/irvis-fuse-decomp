@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Download, Share2, BarChart3, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface FusionResultProps {
   fusedImage?: string;
@@ -14,13 +15,73 @@ interface FusionResultProps {
     gradient_strength: number;
   };
   processingTime?: number;
+  onAnalyze?: () => void;
 }
 
 export const FusionResult: React.FC<FusionResultProps> = ({
   fusedImage,
   metrics,
-  processingTime
+  processingTime,
+  onAnalyze
 }) => {
+  const handleDownload = () => {
+    if (!fusedImage) return;
+
+    const link = document.createElement('a');
+    link.href = fusedImage;
+    link.download = `fusion-result-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Image downloaded successfully');
+  };
+
+  const handleShare = async () => {
+    if (!fusedImage) return;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'FusionLab Result',
+          text: 'Check out this image fusion result!',
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.info('Link copied to clipboard');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast.error('Failed to share result');
+    }
+  };
+
+  const handleAnalyze = () => {
+    if (!metrics) return;
+
+    let qualityMessage = "";
+    if (metrics.ssim > 0.9) {
+      qualityMessage = "Exceptional structural preservation. The fused image maintains almost all details from both sources.";
+    } else if (metrics.ssim > 0.8) {
+      qualityMessage = "High quality fusion. Good balance between thermal information and visual details.";
+    } else {
+      qualityMessage = "Standard fusion. Some structural information may be prioritized for visibility.";
+    }
+
+    const noiseInfo = metrics.psnr > 35 ? "Very low noise levels (Excellent PSNR)." :
+      metrics.psnr > 30 ? "Clear output with minimal artifacts." :
+        "Moderate noise levels, optimized for feature visibility.";
+
+    const detailInfo = metrics.entropy > 7 ? "Rich information density with high detail retention." : "Good detail clarity in target areas.";
+
+    toast.info(`Fusion Analysis Report`, {
+      description: `${qualityMessage} ${noiseInfo} ${detailInfo}`,
+      duration: 6000,
+    });
+
+    if (onAnalyze) onAnalyze();
+  };
+
   return (
     <Card className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-fusion opacity-5" />
@@ -59,7 +120,7 @@ export const FusionResult: React.FC<FusionResultProps> = ({
                     <Badge variant="outline">{metrics.ssim.toFixed(3)}</Badge>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 mt-2">
-                    <div 
+                    <div
                       className="bg-gradient-fusion h-2 rounded-full transition-all duration-500"
                       style={{ width: `${metrics.ssim * 100}%` }}
                     />
@@ -72,7 +133,7 @@ export const FusionResult: React.FC<FusionResultProps> = ({
                     <Badge variant="outline">{metrics.psnr.toFixed(1)} dB</Badge>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 mt-2">
-                    <div 
+                    <div
                       className="bg-gradient-visible h-2 rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(metrics.psnr / 50, 1) * 100}%` }}
                     />
@@ -85,7 +146,7 @@ export const FusionResult: React.FC<FusionResultProps> = ({
                     <Badge variant="outline">{metrics.entropy.toFixed(2)}</Badge>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 mt-2">
-                    <div 
+                    <div
                       className="bg-gradient-infrared h-2 rounded-full transition-all duration-500"
                       style={{ width: `${(metrics.entropy / 8) * 100}%` }}
                     />
@@ -98,7 +159,7 @@ export const FusionResult: React.FC<FusionResultProps> = ({
                     <Badge variant="outline">{metrics.gradient_strength.toFixed(2)}</Badge>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 mt-2">
-                    <div 
+                    <div
                       className="bg-primary h-2 rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(metrics.gradient_strength / 100, 1) * 100}%` }}
                     />
@@ -108,15 +169,15 @@ export const FusionResult: React.FC<FusionResultProps> = ({
             )}
 
             <div className="flex gap-3">
-              <Button variant="outline" size="sm" className="flex-1">
+              <Button variant="outline" size="sm" className="flex-1" onClick={handleDownload}>
                 <Download className="w-4 h-4 mr-2" />
                 Download
               </Button>
-              <Button variant="outline" size="sm" className="flex-1">
+              <Button variant="outline" size="sm" className="flex-1" onClick={handleShare}>
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" size="sm" className="flex-1">
+              <Button variant="outline" size="sm" className="flex-1" onClick={handleAnalyze}>
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Analyze
               </Button>

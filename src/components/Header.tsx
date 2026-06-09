@@ -28,13 +28,9 @@ export const Header: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => window.location.href = '/'}>
               <Info className="w-4 h-4 mr-2" />
               About
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Github className="w-4 h-4 mr-2" />
-              GitHub
             </Button>
             <Button variant="glass" size="sm">
               <Settings className="w-4 h-4 mr-2" />
